@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Products</title>
+		<link rel="stylesheet" type="text/css" href="bootstrap.css" />
+		<script src="angular.min.js"></script>	
+	</head>
+
+	<body ng-app="store">
+		<div class="container">
+			<h2>Products</h2>
+			<div class="row">
+				<div class="col-md-9">
+					<div class="row" ng-controller="StoreController as store">
+
+						<div class="col-sm-4 col-lg-4 col-md-4" ng-repeat="product in store.products">
+	                        <div class="thumbnail">
+	                            <img ng-src="{{product.images[0].thumb}}" alt="">
+	                            <div class="caption">
+	                                <h4 class="pull-right">{{product.price | currency}}</h4>
+	                                <h4><a href="#">{{product.name}}</a>
+	                                </h4>	                               		
+	                               		<product-panels ng-controller="TabController as tab"></product-panels>
+												
+	                            </div>
+	                            
+                    	</div>
+
+	                </div> <!-- row -->    
+                </div> <!-- col-md-9 -->
+            </div>  <!--- row-->	 	
+		</div>	<!--- container-->		
+		<script type="text/javascript">
+			var app = angular.module('store',[]);
+			/*app.controller('StoreController',function(){				
+				this.products = books;				
+			});*/
+
+			app.controller('StoreController',['$http', function($http){				
+				 var me = this;
+				 me.products = [];	
+				//var products = this;
+				$http.get('products.json').success(function(data){
+					me.products = data;
+				});			
+			}]);
+
+			app.controller('TabController',function(){
+				this.tab = 1;				
+				this.selectTab = function(newValue){
+					 this.tab = newValue;
+				};
+				this.isSelected = function(tabName){
+					 return this.tab === tabName;
+				}
+			});
+
+			app.controller('ReviewController',function(){
+				this.review ={};
+				this.addReview = function(product){
+					product.reviews.push(this.review);
+					this.review ={};
+				}
+			});
+			app.directive('productReview',function(){
+				return{
+					restrict :'E',
+					templateUrl: 'review.html'
+				}
+			});
+
+			app.directive('productPanels',function(){
+				return{
+					restrict: 'E',
+					templateUrl: 'product-panels.html',
+					controller: function(){
+
+					},
+					controllerAs: 'tab'
+				}
+			});
+
+
+			/*var books =[
+					{
+						name:'Angular JS',
+						price: 100,
+						description: 'Master Angular JS on 10 days',
+						canPurchase: false,
+						soldOut: false,
+						images:[
+							{thumb:'image.jpg'}
+						],
+						reviews:[]
+					},
+					{
+						name:'jQuery',
+						price: 250,
+						description: 'Lear A to Z about jQuery',
+						canPurchase: false,
+						soldOut: false,
+						images:[
+							{thumb:'image.jpg'}
+						],
+						reviews:[]
+					},
+					{
+						name:'PHP',
+						price: 250,
+						description: 'Lear A to Z about PHP',
+						canPurchase: false,
+						soldOut: false,
+						images:[
+							{thumb:'image.jpg'}
+						],
+						reviews:[]
+					},
+					{
+						name:'Laravel',
+						price: 250,
+						description: 'Lear A to Z about Laravel',
+						canPurchase: false,
+						soldOut: false,
+						images:[
+							{thumb:'image.jpg'}
+						],
+						reviews:[]
+					}
+				]*/
+		</script>
+		<style>
+		.ng-invalid.ng-dirty{
+			border-color: red;
+		}
+		.ng-valid.ng-dirty{
+			border-color: green;
+		}
+		</style>
+	</body>
+</html>
